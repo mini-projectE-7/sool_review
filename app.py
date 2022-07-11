@@ -17,8 +17,13 @@ def post():
 def login():
     return render_template("login.html")
 
-@app.route('/review')
+
+@app.route('/join')
 def join():
+    return render_template("join.html")
+
+@app.route('/review')
+def review():
     return render_template("review.html")
 
 
