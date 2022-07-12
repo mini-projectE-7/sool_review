@@ -29,7 +29,7 @@
             <option value="naver.com">naver.com</option>
             <option value="gmail.com">gmail.com</option>
             <option value="hanmail.net">hanmail.net</option>
-            <option value="kakao">kakao.com</option>
+            <option value="kakao.com">kakao.com</option>
         </select>
     </div>
     <div class="form__errorbox" id="emailError"></div>
@@ -46,6 +46,7 @@
     <button class="signUp" id="signUp" onclick="signUp()">회원가입</button>
 </body>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     const idInput = document.getElementById("id");
     const idCheckBtn = document.getElementById("idCheck");
@@ -68,12 +69,16 @@
         idDuplicatedCheck();
     })
 
+    emailIDInput.addEventListener('input', event => {
+        emailValueCheck();
+    })
+    console.log(1)
     emailDomainInput.addEventListener('input', event => {
-        emailValueCheck(emailDomainInput);
+        emailValueCheck();
     })
 
     emailSelectChange.addEventListener('change', event => {
-        emailValueCheck(emailSelectChange);
+        emailValueCheck();
     })
 
     pwInput.addEventListener('input', event => {
@@ -101,12 +106,17 @@
     function pwValueCheck(inputDiv, errorId) {
         const inputValue = inputDiv.value;
         const errorBox = document.getElementById(errorId);
+        const errorBox2 = document.getElementById("pwCheckError")
         errorBox.style.color = "rgb(255, 129, 129)"
+        console.log(inputValue, pwCheckInput.value)
 
         // 비밀번호 체크
         if (inputValue.length < 8) {
             errorBox.innerHTML = "비밀번호는 최소 8자 이상이어야 합니다.";
             return "error";
+        } else if (inputValue == pwCheckInput.value) {
+            errorBox2.innerHTML = "비밀번호가 일치합니다.";
+            errorBox2.style.color = "rgb(0, 185, 13)";
         } else {
             errorBox.innerHTML = "";
         }
@@ -115,14 +125,20 @@
     function pw2ValueCheck(inputDiv, errorId) {
         const inputValue = inputDiv.value;
         const errorBox = document.getElementById(errorId);
+        const errorBox2 = document.getElementById("pwError");
         errorBox.style.color = "rgb(255, 129, 129)"
 
         // 비밀번호 일치 체크
         if (inputValue !== pwInput.value) {
             errorBox.innerHTML = "비밀번호가 일치하지 않습니다.";
             return "error";
+        } else if (pwInput.value > 7) {
+            errorBox.innerHTML = "";
+            return "error";
         } else {
             errorBox.innerHTML = "비밀번호가 일치합니다.";
+            errorBox2.innerHTML = "";
+            errorBox.style.color = "rgb(0, 185, 13)";
         }
     }
 
@@ -161,13 +177,12 @@
         document.getElementById("emailDomain").value = email;
     }
 
-    function emailValueCheck(Domain) {
+    function emailValueCheck() {
         const emailID = document.getElementById("emailId").value;
-        const emailDom = Domain.value;
+        const emailDom = document.getElementById("emailDomain").value;
         const email = emailID + "@" + emailDom
         const errorBox = document.getElementById("emailError");
         errorBox.style.color = "rgb(255, 129, 129)"
-        console.log(email)
         // 이메일 체크
         if (emailformat.test(email) == false) {
             errorBox.innerHTML = "유효하지 않은 이메일 주소입니다.";
@@ -178,16 +193,18 @@
     }
 
     function signUp() {
-        const user_id = idInput.val;
-        const user_password = pwInput.val;
+        const user_id = $("#id").val();
+        const user_password = $("#pw").val();
         const idCheckResult = document.getElementById("idError").innerHTML;
         const pwCheckResult = document.getElementById("pwCheckError").innerHTML;
-        console.log(idCheckResult, pwCheckResult)
+        const emailCheckResult = document.getElementById("emailError").innerHTML;
 
         if (idCheckResult !== "사용할 수 있는 아이디입니다.") {
             alert("아이디 중복확인을 해주세요.");
         } else if (pwCheckResult !== "비밀번호가 일치합니다.") {
             alert("비밀번호를 다시 확인해 주세요.");
+        } else if (emailCheckResult == "유효하지 않은 이메일 주소입니다.") {
+            alert("이메일 주소를 다시 확인해 주세요.")
         } else {
             $.ajax({
                 type: "POST",

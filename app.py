@@ -1,9 +1,8 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 import certifi
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
-from requests import request
 
 load_dotenv()
 mongodbUri = os.environ.get('mongodbUri')
@@ -49,7 +48,7 @@ def signUp():
 
     doc = {
         "userID": id_receive,
-        "pw": pw_receive,
+        "pw": pw_receive
     }
     db.users.insert_one(doc)
     return jsonify({'result': 'success'})
